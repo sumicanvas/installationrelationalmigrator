@@ -127,6 +127,68 @@ Oracle의 `XMLType` 컬럼을 마이그레이션할 경우에는 Oracle의 `xdb.
 
 Finder에서 `Shift + Command + G`를 누르고 위 경로를 입력하면 파일 위치로 이동할 수 있습니다.
 
+## 현재 설치된 로컬 MySQL 샘플 환경
+
+2026-08-21에 Homebrew를 사용해 다음 환경을 구성했습니다.
+
+| 항목 | 값 |
+| --- | --- |
+| MySQL Server | 8.4.11 LTS |
+| 호스트 | `127.0.0.1` |
+| 포트 | `3306` |
+| 데이터베이스 | `world` |
+| 사용자 | `world_migrator` |
+| 비밀번호 | `WorldMigrator_2026!` |
+| JDBC URL | `jdbc:mysql://127.0.0.1:3306/world` |
+
+이 계정은 로컬 샘플 및 Relational Migrator 실습 전용입니다. 운영 환경에서 같은 비밀번호를 재사용하지 않습니다.
+
+샘플 데이터는 다음과 같이 구성되어 있습니다.
+
+| 테이블 | 행 수 |
+| --- | ---: |
+| `city` | 4,079 |
+| `country` | 239 |
+| `countrylanguage` | 984 |
+
+MySQL은 로그인할 때 자동으로 시작되며 외부 네트워크에 노출되지 않도록 `127.0.0.1`에서만 연결을 받습니다. 설정 파일은 `/opt/homebrew/etc/my.cnf`입니다.
+
+서비스 상태 확인:
+
+```bash
+brew services list
+```
+
+서비스 시작, 중지 및 재시작:
+
+```bash
+brew services start mysql@8.4
+brew services stop mysql@8.4
+brew services restart mysql@8.4
+```
+
+터미널에서 `world` 데이터베이스에 접속:
+
+```bash
+/opt/homebrew/opt/mysql@8.4/bin/mysql \
+  -h 127.0.0.1 \
+  -P 3306 \
+  -u world_migrator \
+  -p \
+  world
+```
+
+비밀번호 입력 메시지가 표시되면 `WorldMigrator_2026!`를 입력합니다.
+
+MySQL `root` 비밀번호는 macOS Keychain에 임의의 강력한 값으로 저장했습니다. 필요한 경우 다음 명령으로 확인할 수 있습니다.
+
+```bash
+security find-generic-password \
+  -a root \
+  -s "Homebrew MySQL 8.4 root" \
+  -w
+```
+
 ## 참고 자료
 
 - [공식 macOS 설치 문서](https://www.mongodb.com/docs/relational-migrator/installation/install-on-a-local-machine/install-mac/)
